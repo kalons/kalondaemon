@@ -1,0 +1,44 @@
+USAGE:  
+
+put the code below in mydaemon.php    
+require_once '/path/to/KalonDaemon.php'; 
+declare(ticks = 1); 
+$toDo = $_SERVER['argv'][1]; 
+$daemonConf = array('pidFileName' => 'mydaemon.pid', 
+                    'verbose'     => true); 
+function myHandler1() 
+{ 
+    sleep(5); 
+    echo "This handler1 works./n"; 
+} 
+function myHandler2() 
+{ 
+   echo "This handler2 works./n"; 
+} 
+try { 
+    $daemon = new KalonDaemon($daemonConf); 
+    if ($toDo == 'start') { 
+        $daemon->addSignalHandler(SIGUSR1, 'myHandler1'); 
+        $daemon->addSignalHandler(SIGUSR2, 'myHandler2'); 
+        $daemon->start(); 
+        for (;;) { 
+            echo "running./n"; 
+            sleep(1000); 
+        } 
+    } elseif ($toDo == 'stop') { 
+        $daemon->stop(); 
+    } else { 
+        die("unknown action."); 
+    } 
+} catch (KalonDaemonException $e) { 
+    echo $e->getMessage(); 
+    echo "/n"; 
+} 
+ 
+ then open a command shell: 
+ start daemon: 
+ /path/to/phpcli/php /path/to/mydaemon.php start 
+  
+ stop daemon: 
+ /path/to/phpcli/php /path/to/mydaemon.php stop 
+   
