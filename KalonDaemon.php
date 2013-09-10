@@ -94,6 +94,7 @@ class KalonDaemon
 	    //load config
         if (is_array($configs))
             $this->setConfigs($configs);
+        
 	}
 	
 	/**
@@ -363,7 +364,7 @@ class KalonDaemon
 	 */
 	public function signalHandler($signo)
 	{	
-		$signFuns = $this->_signalHandlerFuns[$signo];
+		$signFuns = isset($this->_signalHandlerFuns[$signo]) ? $this->_signalHandlerFuns[$signo] : array();
 		if (is_array($signFuns)) {
 		    foreach ($signFuns as $fun) {
 	            call_user_func($fun);
@@ -373,12 +374,19 @@ class KalonDaemon
 		//default action
 		switch ($signo) {
 			case SIGTERM:
-				exit;
+				if (!count($signFuns)) {
+					exit;
+				}
 				break;
 			default:
 				// handle all other signals
 		}		
 		
+	}
+	
+	public function setGracefulStopHandler($fun)
+	{
+		return $this->addSignalHandler(SIGTERM, $fun);
 	}
 	
 	public function addSignalHandler($signo, $fun)
