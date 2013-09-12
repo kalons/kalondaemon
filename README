@@ -1,44 +1,25 @@
 USAGE:  
 
-put the code below in mydaemon.php    
-require_once '/path/to/KalonDaemon.php'; 
-declare(ticks = 1); 
-$toDo = $_SERVER['argv'][1]; 
-$daemonConf = array('pidFileName' => 'mydaemon.pid', 
-                    'verbose'     => true); 
-function myHandler1() 
-{ 
-    sleep(5); 
-    echo "This handler1 works./n"; 
-} 
-function myHandler2() 
-{ 
-   echo "This handler2 works./n"; 
-} 
-try { 
-    $daemon = new KalonDaemon($daemonConf); 
-    if ($toDo == 'start') { 
-        $daemon->addSignalHandler(SIGUSR1, 'myHandler1'); 
-        $daemon->addSignalHandler(SIGUSR2, 'myHandler2'); 
-        $daemon->start(); 
-        for (;;) { 
-            echo "running./n"; 
-            sleep(1000); 
-        } 
-    } elseif ($toDo == 'stop') { 
-        $daemon->stop(); 
-    } else { 
-        die("unknown action."); 
-    } 
-} catch (KalonDaemonException $e) { 
-    echo $e->getMessage(); 
-    echo "/n"; 
-} 
- 
- then open a command shell: 
- start daemon: 
- /path/to/phpcli/php /path/to/mydaemon.php start 
-  
- stop daemon: 
- /path/to/phpcli/php /path/to/mydaemon.php stop 
+
+[root@localhost ~]# php test.php start
+Daemon started with pid xxx...
+Stop flag is 0
+Stop flag is 0
+Stop flag is 0
+
+Stop flag is 1  ("php test.php stop" executed in another shell, process with id xxx stopped)
+
+
+基本原理就是cli模式下执行php test.php start之后其会成为一个后台守护进程，进程号为xxx，守护进程主逻辑是一个死循环，不断的输出
+stop flag的值，然后睡眠5秒。当系统接收到php test.php stop命令之后，会给守护进程发送一个信号，守护进程收到信号之后会将Stop flag
+设置成1，然后主循环就会终止，守护进程退出。
+可以据此守护模型扩展开发PHP后台服务，PHP多进程任务等等。
+
+
+
+
+
+
+
+
    
