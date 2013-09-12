@@ -22,7 +22,7 @@ try {
         $daemon->start();
         
         $i = 0;
-        $badVideos = array();
+    
         for (;;) {
             echo "Stop flag is $stopFlag\n";
             //如果设置了结束标签则退出循环
