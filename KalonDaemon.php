@@ -384,7 +384,7 @@ class KalonDaemon
 		
 	}
 	
-	
+
 	public function setGracefulStopHandler($fun)
 	{
 		return $this->addSignalHandler(SIGTERM, $fun);
@@ -730,7 +730,7 @@ class KalonDaemon
 	private function _out($str)
 	{
 	    if ($this->_verbose) {
-	        fwrite(STDOUT, $str . "/n");
+	        fwrite(STDOUT, $str . "\n");
 	    } 
 	    return true;    
 	}
