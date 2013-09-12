@@ -384,6 +384,7 @@ class KalonDaemon
 		
 	}
 	
+	
 	public function setGracefulStopHandler($fun)
 	{
 		return $this->addSignalHandler(SIGTERM, $fun);
